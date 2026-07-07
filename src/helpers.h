@@ -20,24 +20,27 @@ void reportWatchTime(const char* label) {
   if (!DEBUG || !Serial)
     return;
 
-  time_t utc = rtc.getEpoch();
-  time_t local = rtc.getLocalEpoch();
+  time_t displayTime = rtc.getEpoch();
+  time_t rawRtcTime = rtc.getLocalEpoch();
 
-  char utcBuf[24];
-  char localBuf[24];
-  sprintf(utcBuf, "%04d-%02d-%02d %02d:%02d:%02d", year(utc), month(utc), day(utc), hour(utc), minute(utc), second(utc));
-  sprintf(localBuf, "%04d-%02d-%02d %02d:%02d:%02d", year(local), month(local), day(local), hour(local), minute(local), second(local));
+  char displayBuf[24];
+  char rawRtcBuf[24];
+  sprintf(displayBuf, "%04d-%02d-%02d %02d:%02d:%02d", year(displayTime), month(displayTime), day(displayTime), hour(displayTime), minute(displayTime), second(displayTime));
+  sprintf(rawRtcBuf, "%04d-%02d-%02d %02d:%02d:%02d", year(rawRtcTime), month(rawRtcTime), day(rawRtcTime), hour(rawRtcTime), minute(rawRtcTime), second(rawRtcTime));
+  unsigned long rtcMillis = rtc.getMillis();
 
   Serial.print("WATCH_TIME ");
   Serial.print(label);
-  Serial.print(" local=");
-  Serial.print(localBuf);
-  Serial.print(" utc=");
-  Serial.print(utcBuf);
-  Serial.print(" epoch=");
-  Serial.print(utc);
-  Serial.print(" local_epoch=");
-  Serial.print(local);
+  Serial.print(" display=");
+  Serial.print(displayBuf);
+  Serial.print(" raw_rtc=");
+  Serial.print(rawRtcBuf);
+  Serial.print(" display_epoch=");
+  Serial.print(displayTime);
+  Serial.print(" raw_rtc_epoch=");
+  Serial.print(rawRtcTime);
+  Serial.print(" rtc_millis=");
+  Serial.print(rtcMillis);
   Serial.print(" offset_seconds=");
   Serial.println(rtc.offset);
 }
@@ -51,6 +54,23 @@ void handleSerialMonitor() {
 
     if (c == 't' || c == 'T') {
       reportWatchTime("serial_request");
+      lastSerialMonitor = millis();
+    } else if (c == 's' || c == 'S') {
+      time_t utc = (time_t) Serial.parseInt();
+      long offsetSeconds = Serial.parseInt();
+      int setMillis = Serial.parseInt();
+
+      if (utc > 0) {
+        rtc.offset = offsetSeconds;
+        RTC_OFFSET = rtc.offset;
+        prefs.putLong("offset", RTC_OFFSET);
+        lastRtcOffset = RTC_OFFSET;
+        rtc.setTime(utc, setMillis * 1000);
+        reportWatchTime("serial_set_time");
+      } else {
+        Serial.println("WATCH_TIME serial_set_time_failed");
+      }
+
       lastSerialMonitor = millis();
     }
   }

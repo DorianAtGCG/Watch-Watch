@@ -1,7 +1,8 @@
 void setup() 
 { 
   if (DEBUG) {
-    Serial.begin(115200);        
+    Serial.begin(115200);
+    Serial.setTimeout(100);
   }
 
   // Disable Wi-Fi to save power
@@ -11,7 +12,12 @@ void setup()
   // Disable Bluetooth to save power
   btStop();
   esp_bt_controller_disable();
-  
+
+  prefs.begin("watch", false);
+  RTC_OFFSET = prefs.getLong("offset", RTC_OFFSET);
+  rtc.offset = RTC_OFFSET;
+  lastRtcOffset = RTC_OFFSET;
+
   // When waking from timer, set clock and go back to sleep.
   // TODO: does this even get triggered on wake up from sleep? 
   if(esp_sleep_get_wakeup_cause() == ESP_SLEEP_WAKEUP_TIMER) {

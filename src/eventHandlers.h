@@ -8,6 +8,7 @@ void RX_Handler() {
   myTransfer.rxObj(WatchTime);  
   rtc.offset = ((long) WatchTime.offset) * 60 * 60; // use offset to display local time for hours/minutes
   RTC_OFFSET = rtc.offset; // save for after sleep
+  prefs.putLong("offset", RTC_OFFSET);
   if (RTC_OFFSET != lastRtcOffset) {
     lastOffsetChange = millis();
   }

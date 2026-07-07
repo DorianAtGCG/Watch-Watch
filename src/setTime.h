@@ -1,4 +1,6 @@
-#define TIME_CORRECTION -5.9 // seconds to advance/retard per hour
+#define TIME_CORRECTION -4.60 // seconds to advance/retard per hour
+// -4.60 set @9:50pm 7/6  +11s/5.29h = +2.08s/hr [-4.60]
+// -2.52 set @4:33pm 7/6  -4.68s/1.39h = -3.38s/hr [-2.52]
 // -5.9 set @12pm 3/14  -9s/27h = -0.33s/hr [-6.23]
 // -6 set @8am 3/14 too slow
 // -5.85 set @9am 3/12 +35s/48hr = +0.72s/hr [-6.57]
@@ -18,8 +20,13 @@
 
 
 void correctTime() {
-  // every hour, update the clock to account for drift
-  int correction = (int) (TIME_CORRECTION / 6); // every 10 minutes
-  unsigned long newTime = rtc.getEpoch() + correction;
+  float correctionSeconds = (TIME_CORRECTION * SLEEP_TIME / 3600.0) + RTC_CORRECTION_REMAINDER;
+  int correction = (int) correctionSeconds;
+  RTC_CORRECTION_REMAINDER = correctionSeconds - correction;
+
+  if (correction == 0)
+    return;
+
+  unsigned long newTime = rtc.getLocalEpoch() + correction;
   rtc.setTime(newTime);
 }

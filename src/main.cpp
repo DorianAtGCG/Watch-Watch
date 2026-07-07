@@ -5,6 +5,7 @@
 #include <WiFi.h>   // Include Wi-Fi library
 #include <esp_bt.h> // Include Bluetooth library
 #include <HardwareSerial.h>  // Required for ESP32 serial - default "Serial1" does not work
+#include <Preferences.h>
 #include "SerialTransfer.h"
 #include <ESP32Time.h>
 #include <TimeLib.h>
