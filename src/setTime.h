@@ -1,4 +1,4 @@
-#define TIME_CORRECTION -1.14 // seconds to advance/retard per hour
+#define TIME_CORRECTION -0.85 // seconds to advance/retard per hour
 
 // Drift correction approach, recorded 2026-07-07:
 // GPS/base-station sync is the source of truth. TIME_CORRECTION only needs to keep the
@@ -25,6 +25,7 @@
 // Drift calibration history.
 // Formula: new factor = old factor - observed drift. Positive drift means the watch was fast.
 // Date       Time     Old factor  Observed drift             Factor change  New factor  Notes
+// 2026-07-08 19:46    -1.14       -10.08s/34.32h = -0.29s/hr +0.29         -0.85       Serial request: 39.33s slow, from 29.25s slow at previous point.
 // 2026-07-07 09:27    -4.60       -40.25s/11.62h = -3.46s/hr +3.46         -1.14       From +11s fast at 2026-07-06 21:50 to 29.25s slow now.
 // 2026-07-07 09:19    -4.60       +11s/5.29h = +2.08s/hr    -2.08          -6.68       Superseded: this was calculated without a fresh observation.
 //
