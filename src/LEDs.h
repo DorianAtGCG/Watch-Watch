@@ -33,6 +33,8 @@ int LEDs[][2] {
   {D6,D10},   // 27
 };
 
+const size_t LED_COUNT = sizeof(LEDs) / sizeof(LEDs[0]);
+
 
 int Numbers[4][10] {
   {0}, // Hours: Tens (1)
@@ -56,6 +58,15 @@ void LED_OFF(int LED) {
 void allLightsOff() {
   for (int i = 0; i < LED_PIN_COUNT; i++) {
     pinMode(LED_PINS[i], INPUT);    
+  }
+}
+
+void testEachLED() {
+  for (size_t led = 0; led < LED_COUNT; led++) {
+    allLightsOff();
+    LED_ON(led);
+    delay(3000);
+    LED_OFF(led);
   }
 }
 

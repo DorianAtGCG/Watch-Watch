@@ -21,7 +21,12 @@
 
 
 void loop()
-{    
+{
+#ifdef LED_TEST_MODE
+  testEachLED();
+  return;
+#endif
+
   debugOut("v2 loop start");
 
   bool onBase = false;
